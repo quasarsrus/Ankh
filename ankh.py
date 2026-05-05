@@ -395,6 +395,7 @@ class MLP(object):
         adam_opt["s_dw"+str(i+1)] = np.zeros(np.shape(self.weights["W"+str(i+1)]),dtype = np.float32)
         adam_opt["s_db"+str(i+1)] = np.zeros(np.shape(self.bias["b"+str(i+1)]),dtype = np.float32)
 
+      t = 0
       for j in range(epochs):
         marker = 0
         loss = 0
@@ -416,10 +417,12 @@ class MLP(object):
             adam_opt["s_dw"+str(i+1)] = beta2 * adam_opt["s_dw"+str(i+1)] + np.transpose((1 - beta2) * (grad["delW"+str(i+1)] ) ** 2)
             adam_opt["s_db"+str(i+1)] = beta2 * adam_opt["s_db"+str(i+1)] + np.transpose((1 - beta2) * (grad["delb"+str(i+1)] ) ** 2)
 
-            adam_opt["v_dw_corrected"+str(i+1)] = adam_opt["v_dw"+str(i+1)] / (1 - beta1 ** (j+1))
-            adam_opt["v_db_corrected"+str(i+1)] = adam_opt["v_db"+str(i+1)] / (1 - beta1 ** (j+1))
-            adam_opt["s_dw_corrected"+str(i+1)] = adam_opt["s_dw"+str(i+1)] / (1 - beta2 ** (j+1))
-            adam_opt["s_db_corrected"+str(i+1)] = adam_opt["s_db"+str(i+1)] / (1 - beta2 ** (j+1))
+            adam_opt["v_dw_corrected"+str(i+1)] = adam_opt["v_dw"+str(i+1)] / (1 - beta1 ** (t+1))
+            adam_opt["v_db_corrected"+str(i+1)] = adam_opt["v_db"+str(i+1)] / (1 - beta1 ** (t+1))
+            adam_opt["s_dw_corrected"+str(i+1)] = adam_opt["s_dw"+str(i+1)] / (1 - beta2 ** (t+1))
+            adam_opt["s_db_corrected"+str(i+1)] = adam_opt["s_db"+str(i+1)] / (1 - beta2 ** (t+1))
+
+          t+=1
 
           self.update_weights(adam_opt,lr,optimiser)
           if np.shape(x_train)[0] - batch < batch_size:
